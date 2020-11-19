@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>ch.cimnine.alfred.zefix</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>B8563F50-E991-43AC-863E-3C0F0DD503AB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>26FBBD75-94ED-49B3-AB3D-FDFBD12A0703</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Christian Mäder</string>
+	<key>description</key>
+	<string>Find Swiss legal entitites on Zefix</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Zefix Search</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>zefix</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Querying</string>
+				<key>script</key>
+				<string>query=$1
+
+PATH="/usr/local/bin:${PATH}"
+
+if [ "$query" == "" ]; then
+  exit 0
+fi
+
+curl --silent \
+     --header "Content-Type: application/json" \
+     --request POST \
+     --data "{\"name\":\"${query}\",\"languageKey\":\"en\",\"searchType\":\"exact\",\"maxEntries\":15,\"offset\":0}" \
+     https://www.zefix.ch/ZefixREST/api/v1/firm/search.json \
+| \
+jq \
+  '{ items:
+    [
+      .list[]
+      | .uid |= ( capture("(?&lt;C&gt;CHE)(?&lt;a&gt;\\d{3})(?&lt;b&gt;\\d{3})(?&lt;c&gt;\\d{3})") | "\(.C)-\(.a).\(.b).\(.c)" )
+      | { 
+        title: .name,
+        subtitle: .uid,
+        autocomplete: .name,
+        variables: { name: .name, uid: .uid }
+      }
+    ]
+  }'</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>query.sh</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Company Name</string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B8563F50-E991-43AC-863E-3C0F0DD503AB</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>26FBBD75-94ED-49B3-AB3D-FDFBD12A0703</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>This workflow allows searching for Swiss legal entities on the [Zefix](https://zefix.ch).</string>
+	<key>uidata</key>
+	<dict>
+		<key>26FBBD75-94ED-49B3-AB3D-FDFBD12A0703</key>
+		<dict>
+			<key>xpos</key>
+			<integer>620</integer>
+			<key>ypos</key>
+			<integer>65</integer>
+		</dict>
+		<key>B8563F50-E991-43AC-863E-3C0F0DD503AB</key>
+		<dict>
+			<key>xpos</key>
+			<integer>330</integer>
+			<key>ypos</key>
+			<integer>65</integer>
+		</dict>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>0.0.1</string>
+	<key>webaddress</key>
+	<string>https://github.com/cimnine/alfred-zefix</string>
+</dict>
+</plist>
