@@ -28,6 +28,11 @@ jq \
             valid: true,
             arg: .uid,
             subtitle: .uid
+          },
+          alt: {
+            valid: true,
+            arg: "\(.uid) MWST",
+            subtitle: "\(.uid) MWST"
           }
         },
         autocomplete: .name,
